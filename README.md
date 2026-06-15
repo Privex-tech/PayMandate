@@ -43,7 +43,7 @@ We are also running structured merchant interviews to validate demand before loc
 Prerequisites: Rust (with `wasm32v1-none` target), [stellar-cli](https://developers.stellar.org/docs/tools/cli) ≥ 25.
 
 ```bash
-git clone https://github.com/paymandate/paymandate
+git clone https://github.com/Privex-tech/PayMandate.git
 cd paymandate
 make test          # run the contract test suite
 make build         # compile the contract to wasm
