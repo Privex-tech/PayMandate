@@ -174,13 +174,20 @@ impl MandateContract {
         payer.require_auth();
 
         let now = env.ledger().timestamp();
-        if amount_per_period <= 0
-            || period_secs == 0
-            || expires_at <= now
-            || allowance_live_until <= env.ledger().sequence()
-            || merchant == payer
-        {
-            return Err(Error::InvalidParams);
+        if amount_per_period <= 0 {
+            return Err(Error::ZeroAmount);
+        }
+        if period_secs == 0 {
+            return Err(Error::ZeroPeriod);
+        }
+        if expires_at <= now {
+            return Err(Error::InvalidExpiry);
+        }
+        if allowance_live_until <= env.ledger().sequence() {
+            return Err(Error::InvalidAllowance);
+        }
+        if merchant == payer {
+            return Err(Error::SelfPayment);
         }
 
         // Number of period slots until expiry, rounded up.
