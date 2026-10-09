@@ -283,8 +283,24 @@ fn charge_fails_after_expiry() {
 fn charge_rejects_non_positive_amount() {
     let s = setup();
     let id = create_default(&s);
-    assert_eq!(s.client.try_charge(&id, &0), Err(Ok(Error::InvalidParams)));
-    assert_eq!(s.client.try_charge(&id, &-5), Err(Ok(Error::InvalidParams)));
+    assert_eq!(s.client.try_charge(&id, &0), Err(Ok(Error::ZeroAmount)));
+    assert_eq!(s.client.try_charge(&id, &-5), Err(Ok(Error::ZeroAmount)));
+}
+
+#[test]
+fn charge_reaches_lifetime_ceiling() {
+    let s = setup();
+    let id = create_default(&s);
+
+    s.client.charge(&id, &CAP); // Period 0
+    s.env.ledger().with_mut(|li| li.timestamp = T0 + PERIOD);
+    s.client.charge(&id, &CAP); // Period 1
+    s.env.ledger().with_mut(|li| li.timestamp = T0 + 2 * PERIOD);
+    s.client.charge(&id, &CAP); // Period 2
+
+    let m = s.client.get_mandate(&id);
+    assert_eq!(m.lifetime_spent, 3 * CAP);
+    assert_eq!(m.lifetime_ceiling, 3 * CAP);
 }
 
 #[test]
