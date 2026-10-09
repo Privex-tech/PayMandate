@@ -20,6 +20,13 @@ PayMandate is that rail, built as a public good:
 
 We are also running structured merchant interviews to validate demand before locking the roadmap — findings will be published in [`docs/validation/`](docs/validation/) as they land.
 
+## Deployed Contract
+
+The contract is currently deployed on the Stellar Testnet for testing and integration purposes.
+
+- **Contract ID:** `CDICIH4HDBG2LICGII5SKWC54CJDWAGIWOHCUIVQVCMD6HDDBFQ5MWSO`
+- **Explorer:** [Stellar Expert Testnet Link](https://stellar.expert/explorer/testnet/contract/CDICIH4HDBG2LICGII5SKWC54CJDWAGIWOHCUIVQVCMD6HDDBFQ5MWSO)
+
 ## How it works
 
 ```
