@@ -155,7 +155,7 @@ fn create_rejects_zero_amount() {
         &(T0 + PERIOD),
         &LIVE_UNTIL,
     );
-    assert_eq!(r, Err(Ok(Error::InvalidParams)));
+    assert_eq!(r, Err(Ok(Error::ZeroAmount)));
 }
 
 #[test]
@@ -170,7 +170,7 @@ fn create_rejects_zero_period() {
         &(T0 + PERIOD),
         &LIVE_UNTIL,
     );
-    assert_eq!(r, Err(Ok(Error::InvalidParams)));
+    assert_eq!(r, Err(Ok(Error::ZeroPeriod)));
 }
 
 #[test]
@@ -185,7 +185,7 @@ fn create_rejects_expiry_not_in_future() {
         &T0,
         &LIVE_UNTIL,
     );
-    assert_eq!(r, Err(Ok(Error::InvalidParams)));
+    assert_eq!(r, Err(Ok(Error::InvalidExpiry)));
 }
 
 #[test]
@@ -200,7 +200,7 @@ fn create_rejects_allowance_expiry_at_or_before_current_ledger() {
         &(T0 + PERIOD),
         &SEQ0, // not strictly in the future
     );
-    assert_eq!(r, Err(Ok(Error::InvalidParams)));
+    assert_eq!(r, Err(Ok(Error::InvalidAllowance)));
 }
 
 // ---------------------------------------------------------------- charge ---
@@ -381,7 +381,7 @@ fn create_rejects_merchant_equal_to_payer() {
         &(T0 + PERIOD),
         &LIVE_UNTIL,
     );
-    assert_eq!(r, Err(Ok(Error::InvalidParams)));
+    assert_eq!(r, Err(Ok(Error::SelfPayment)));
 }
 
 #[test]
