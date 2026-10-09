@@ -257,7 +257,7 @@ impl MandateContract {
         m.merchant.require_auth();
 
         if amount <= 0 {
-            return Err(Error::InvalidParams);
+            return Err(Error::ZeroAmount);
         }
         if m.status != MandateStatus::Active {
             return Err(Error::MandateNotActive);
@@ -287,9 +287,9 @@ impl MandateContract {
         let lifetime_spent = m
             .lifetime_spent
             .checked_add(amount)
-            .ok_or(Error::ExceedsPeriodCap)?;
+            .ok_or(Error::ExceedsLifetimeCeiling)?;
         if lifetime_spent > m.lifetime_ceiling {
-            return Err(Error::ExceedsPeriodCap);
+            return Err(Error::ExceedsLifetimeCeiling);
         }
 
         // Pull the funds: payer → merchant, drawing on the allowance.
