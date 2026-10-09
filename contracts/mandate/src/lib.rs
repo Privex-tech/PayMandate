@@ -44,6 +44,8 @@ pub enum Error {
     MandateExpired = 3,
     ExceedsPeriodCap = 4,
     InvalidParams = 5,
+    ZeroAmount = 6,
+    ZeroPeriod = 7,
 }
 
 #[contracttype]
