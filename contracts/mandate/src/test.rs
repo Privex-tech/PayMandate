@@ -419,3 +419,29 @@ fn get_mandate_fails_for_unknown_id() {
     let r = s.client.try_get_mandate(&42);
     assert_eq!(r, Err(Ok(Error::MandateNotFound)));
 }
+
+#[test]
+fn queries_return_correct_accounting() {
+    let s = setup();
+    let id = create_default(&s);
+
+    assert_eq!(s.client.get_available_in_period(&id), CAP);
+    assert_eq!(s.client.get_lifetime_remaining(&id), 3 * CAP);
+
+    s.client.charge(&id, &(30 * ONE));
+
+    assert_eq!(s.client.get_available_in_period(&id), CAP - 30 * ONE);
+    assert_eq!(s.client.get_lifetime_remaining(&id), 3 * CAP - 30 * ONE);
+
+    s.env.ledger().with_mut(|li| li.timestamp = T0 + PERIOD);
+
+    // After period rollover, available should reset.
+    assert_eq!(s.client.get_available_in_period(&id), CAP);
+    assert_eq!(s.client.get_lifetime_remaining(&id), 3 * CAP - 30 * ONE);
+
+    s.client.revoke(&id);
+
+    // Queries return 0 if mandate is revoked or expired.
+    assert_eq!(s.client.get_available_in_period(&id), 0);
+    assert_eq!(s.client.get_lifetime_remaining(&id), 0);
+}
