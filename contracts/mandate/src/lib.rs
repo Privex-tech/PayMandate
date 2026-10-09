@@ -359,6 +359,37 @@ impl MandateContract {
     pub fn get_mandate(env: Env, id: u64) -> Result<Mandate, Error> {
         read_mandate(&env, id)
     }
+
+    /// Fetch the amount available to be charged in the current period.
+    pub fn get_available_in_period(env: Env, id: u64) -> Result<i128, Error> {
+        let m = read_mandate(&env, id)?;
+        if m.status != MandateStatus::Active {
+            return Ok(0);
+        }
+        let now = env.ledger().timestamp();
+        if now >= m.expires_at {
+            return Ok(0);
+        }
+        let period = (now - m.start) / m.period_secs;
+        if period > m.current_period {
+            Ok(m.amount_per_period)
+        } else {
+            Ok(m.amount_per_period - m.spent_in_period)
+        }
+    }
+
+    /// Fetch the total amount remaining that can be charged over the mandate's lifetime.
+    pub fn get_lifetime_remaining(env: Env, id: u64) -> Result<i128, Error> {
+        let m = read_mandate(&env, id)?;
+        if m.status != MandateStatus::Active {
+            return Ok(0);
+        }
+        let now = env.ledger().timestamp();
+        if now >= m.expires_at {
+            return Ok(0);
+        }
+        Ok(m.lifetime_ceiling - m.lifetime_spent)
+    }
 }
 
 fn read_mandate(env: &Env, id: u64) -> Result<Mandate, Error> {
