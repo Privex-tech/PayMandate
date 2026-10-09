@@ -46,6 +46,10 @@ pub enum Error {
     InvalidParams = 5,
     ZeroAmount = 6,
     ZeroPeriod = 7,
+    InvalidExpiry = 8,
+    InvalidAllowance = 9,
+    SelfPayment = 10,
+    ExceedsLifetimeCeiling = 11,
 }
 
 #[contracttype]
